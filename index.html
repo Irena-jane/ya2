@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+<button id="ask">Узнать численность населения?</button>
+<div id="output"></div>
+	<script>
+			/**
+ * Реализация API, не изменяйте ее
+ * @param {string} url
+ * @param {function} callback
+ */
+function getData(url, callback) {
+    var RESPONSES = {
+        '/countries': [
+            {name: 'Cameroon', continent: 'Africa'},
+            {name :'Fiji Islands', continent: 'Oceania'},
+            {name: 'Guatemala', continent: 'North America'},
+            {name: 'Japan', continent: 'Asia'},
+            {name: 'Yugoslavia', continent: 'Europe'},
+            {name: 'Tanzania', continent: 'Africa'}
+        ],
+        '/cities': [
+            {name: 'Bamenda', country: 'Cameroon'},
+            {name: 'Suva', country: 'Fiji Islands'},
+            {name: 'Quetzaltenango', country: 'Guatemala'},
+            {name: 'Osaka', country: 'Japan'},
+            {name: 'Subotica', country: 'Yugoslavia'},
+            {name: 'Zanzibar', country: 'Tanzania'},
+        ],
+        '/populations': [
+            {count: 138000, name: 'Bamenda'},
+            {count: 77366, name: 'Suva'},
+            {count: 90801, name: 'Quetzaltenango'},
+            {count: 2595674, name: 'Osaka'},
+            {count: 100386, name: 'Subotica'},
+            {count: 157634, name: 'Zanzibar'}
+        ]
+    };
+
+    setTimeout(function () {
+        var result = RESPONSES[url];
+        if (!result) {
+            return callback('Unknown url');
+        }
+
+        callback(null, result);
+    }, Math.round(Math.random * 1000));
+}
+
+/**
+ * Ваши изменения ниже
+ */
+var btn = document.getElementById('ask');
+var output = document.getElementById('output');
+
+var requests = ['/countries', '/cities', '/populations'];
+var responses = {};
+
+for (var i = 0; i < 3; i++) {
+    var request = requests[i];
+    var callback = function handlerResult(error, result) {
+        responses[handlerResult.request] = result;
+        var l = [];
+        for (K in responses)
+            l.push(K);
+
+        if (l.length == 3) {
+            var c = [], cc = [], p = 0;
+            for (i = 0; i < responses['/countries'].length; i++) {
+                if (responses['/countries'][i].continent === 'Africa') {
+                    c.push(responses['/countries'][i].name);
+                }
+            }
+
+            for (i = 0; i < responses['/cities'].length; i++) {
+                for (j = 0; j < c.length; j++) {
+                    if (responses['/cities'][i].country === c[j]) {
+                        cc.push(responses['/cities'][i].name);
+                    }
+                }
+            }
+
+            for (i = 0; i < responses['/populations'].length; i++) {
+                for (j = 0; j < cc.length; j++) {
+                    if (responses['/populations'][i].name === cc[j]) {
+                        p += responses['/populations'][i].count;
+                    }
+                }
+            }
+
+            output.innerHTML = 'Total population in African cities: ' + p;
+        }
+    };
+    callback.request = request;
+    getData(request, callback);
+}
+
+btn.onclick = function(){
+	var data = window.prompt('Введите название города или страны:');
+	for (var i = 1; i < 3; i++) {
+    var request = requests[i];
+    var callback = function handlerResult(error, result) {
+        responses[handlerResult.request] = result;
+        var l = [];
+        for (K in responses)
+            l.push(K);
+
+        if (l.length > 2) {
+            var res, cc = 0, p = 0;
+
+            for (i = 0; i < responses['/cities'].length; i++) {
+            		if(responses['/cities'][i].name === data){
+            			cc = data;
+            		}
+            		if(responses['/cities'][i].country === data){
+            			cc = responses['/cities'][i].name;
+            		}
+                
+            }
+            if(!cc) {
+            	output.innerHTML = 'Извините в нашей базе нет информации об этом.';
+            	return;
+            }
+
+            for (i = 0; i < responses['/populations'].length; i++) {
+                
+                    if (responses['/populations'][i].name === cc) {
+                        p = responses['/populations'][i].count;
+                    }
+                
+            }
+            if(data === cc) {
+            	res = data;
+            }else{
+            	res = data +'/'+cc;
+            }
+            output.innerHTML = ('Population in '+res+' : ' + p);
+        }
+    };
+    callback.request = request;
+    getData(request, callback);
+}
+
+}
+	</script>
+
+</body>
+</html>
