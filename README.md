@@ -2,4 +2,4 @@
 
 
 
-* Сайт: [cdn_main](http://irena-jane.github.io/ya3/).
+* Сайт: [ya2](http://irena-jane.github.io/ya2/).
